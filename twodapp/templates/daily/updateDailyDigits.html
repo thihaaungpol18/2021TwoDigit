@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Daily 2D{% endblock %}
+{% block content %}
+<div class="container p-5   my-5 border ">
+    <div class="row justify-content-center text-center">
+        <div class="col-6">
+            
+            <h1 class="display-1 fw-bold">Check! is it weekend days</h1>
+            
+            <form method="POST" action="">
+                {{form.hidden_tag()}}
+                {{form.submitField(class="btn btn-primary")}}
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

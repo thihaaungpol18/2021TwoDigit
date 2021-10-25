@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+
+    <link
+      href="{{ url_for('static',filename='styles/Bootstrap-5-5.0.1/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+      crossorigin="anonymous"/>
+
+     <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/DataTables-1.11.3/css/dataTables.bootstrap5.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/Buttons-2.0.1/css/buttons.bootstrap5.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/Buttons-2.0.1/css/buttons.dataTables.min.css') }}"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand border rounded border-success p-2 fw-bold"
+          href="{{url_for('daily.dailyNumbers')}}"
+          >2D</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                class="nav-link lead text-light"
+                aria-current="page"
+                href="{{url_for('bets.getBets')}}"
+                >Betစာရင်း</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link lead text-light"
+                aria-current="page"
+                href="{{url_for('agents.getAgents')}}"
+                >ဒိုင်များ</a
+              >
+            </li>
+          </ul>
+          {% if current_user.is_authenticated %}
+          <a
+            href=""
+            class="badge bg-warning text-dark text-decoration-none me-2"
+            >{{current_user.username}}</a
+          >
+          <a
+            href="{{url_for('admin.logout')}}"
+            class="btn btn-outline-danger"
+            type="submit"
+            >Logout</a
+          >
+          {% else %}
+          <a
+            href="{{url_for('admin.logout')}}"
+            class="btn btn-outline-primary"
+            type="submit"
+            >Login</a
+          >
+          <a
+            href="{{url_for('admin.register')}}"
+            class="btn btn-outline-success ms-2"
+            type="submit"
+            >Register</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+    {% block content %}{% endblock %}
+
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static',filename='styles/jQuery-3.6.0/jquery-3.6.0.js') }}"></script>
+   
+    <script type="text/javascript" charset="utf8"
+      src="{{ url_for('static',filename='styles/DataTables-1.11.3/js/jquery.dataTables.js') }}"></script>
+   
+      <script type="text/javascript" charset="utf8"
+    src="{{ url_for('static',filename='styles/DataTables-1.11.3/js/dataTables.bootstrap5.js') }}"></script>
+   
+    <script type="text/javascript" charset="utf8"
+      src="{{ url_for('static',filename='styles/Buttons-2.0.1/js/dataTables.buttons.min.js') }}"></script>
+   
+      <script type="text/javascript" charset="utf8"
+    src="{{ url_for('static',filename='styles/JSZip-2.5.0/jszip.min.js') }}"></script>
+   
+    <script type="text/javascript" charset="utf8"
+    src="{{ url_for('static',filename='styles/pdfmake-0.1.36/pdfmake.min.js') }}"></script>
+   
+    <script type="text/javascript" charset="utf8"
+   src="{{ url_for('static',filename='styles/pdfmake-0.1.36/vfs_fonts.js') }}"></script>
+    
+   <script type="text/javascript"  src="{{ url_for('static',filename='styles/Buttons-2.0.1/js/buttons.bootstrap5.js') }}"></script>
+    
+    <script type="text/javascript" charset="utf8"
+    src="{{ url_for('static',filename='styles/Buttons-2.0.1/js/buttons.html5.min.js') }}"></script>
+
+    <script
+    crossorigin="anonymous"
+    src="{{ url_for('static',filename='styles/Bootstrap-5-5.0.1/js/bootstrap.bundle.min.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

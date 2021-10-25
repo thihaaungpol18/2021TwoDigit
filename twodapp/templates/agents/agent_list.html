@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Players{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="modal fade" id="agentCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Player</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <h1 class="form-label">{{form.name.label}}</h1>
+                        <div class="me-2" style="display: inline;">{{form.name()}}</div>
+                        {{form.submit( class="btn btn-primary")}}
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-between justify-content-center-sm">
+        <div class="col-md-2 col-sm-12">
+            <h2 class="display-5 fw-bold">Players</h2>
+        </div>
+        <div class="col-md-3 col-sm-12">
+            <a data-bs-toggle="modal" data-bs-target="#agentCreateModal"
+                class="badge mt-3 p-2 rounded-pill bg-primary text-decoration-none">New Player</a>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-12 ">
+            <div class="table-responsive">
+                <table id="twodtable" class="display table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Created</th>
+                            <th>Name</th>
+                            <th>Total bets</th>
+                            <th>Balance</th>
+                            <th>Total wages</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agent in agents %}
+                        <tr>
+                            <td>{{agent.id}}</td>
+                            <td>
+                                <span style="font-weight: 900;"
+                                    class="badge bg-primary">{{agent.getSinceDuration()}}</span>
+                            </td>
+                            <td>
+                                <a href="{{url_for('agents.agentProfile',agent_id=agent.id)}}"><span
+                                        style="font-weight: 900;" class="badge bg-secondary">{{agent.name}}</span></a>
+                            </td>
+                            <td>
+                                <span style="font-weight: 900;">{{agent.getNumberOfBets()}}</span>
+                            </td>
+                            <td>
+                                <span style="font-weight: 900;">{{agent.getTotalBalance()}}</span>
+                            </td>
+                            <td>
+                                <span style="font-weight: 900;">{{agent.getTotalAmountOfBets()}}</span>
+                            </td>
+                            <td>
+                                <a data-bs-toggle="modal" data-bs-target="#agentDeleteModal{{agent.id}}"
+                                    class="badge p-2  rounded-pill bg-danger text-decoration-none">Delete</a>
+                                <a data-bs-toggle="modal" data-bs-target="#agentUpdateModal{{agent.id}}"
+                                    class="badge p-2  rounded-pill bg-primary text-decoration-none">Update</a>
+                            </td>
+
+                            <!-- Modal For Deleting Agent -->
+                            <div class="modal fade" id="agentDeleteModal{{agent.id}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog ">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Remove {{agent.name}} ?
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5 class="alert alert-danger">Are u sure?</h5>
+                                            <p class="alert alert-danger">
+                                                <b>{{agent.name}}</b> Delete a player will also delete associated bets!</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a class="badge mt-3 p-2 rounded-pill bg-primary text-decoration-none"
+                                                href="{{url_for('agents.deleteAgent',id=agent.id)}}">I'm sure</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal For Updaing Old Agent Name -->
+                            <div class="modal fade" id="agentUpdateModal{{agent.id}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">
+                                                {{agent.name}}ကိုနာမည်ပြောင်းမည်?</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{url_for('agents.updateAgent',id=agent.id)}}" method="post">
+                                                {{form.hidden_tag()}}
+                                                <p class="lead">{{agent.name}}</p>
+                                                {{form.name.label(class="form-label")}}
+                                                {{form.name(class="form-control")}}
+                                                {{form.submit(class="btn btn-primary mt-2")}}
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#twodtable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+        });
+    </script>
+    {% endblock %}

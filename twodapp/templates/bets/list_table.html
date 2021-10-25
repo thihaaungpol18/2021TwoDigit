@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}Betting List{% endblock %}
+{% block content %}
+<div class="container">
+
+    <div class="row justify-content-center my-3">
+
+
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+        {% if errors %}
+        {% for element in errors %}
+
+        <div class="alert alert-danger d-flex alert-dismissible fade show" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+                aria-label="Warning:">
+                <path
+                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+            </svg>
+            <div>
+                {{element}}
+            </div>
+            <button type="button" class="btn-close float-right" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% with errors = get_flashed_messages(category_filter=["success"]) %}
+        {% if errors %}
+        {% for element in errors %}
+        <div class="alert alert-success d-flex alert-dismissible fade show" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+                aria-label="Warning:">
+                <path
+                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+            </svg>
+            <div>
+                {{element}}
+            </div>
+            <button type="button" class="btn-close float-right" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Modal -->
+
+        <div class="modal fade" id="betAddmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">အသစ်ထိုးမယ်</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            {{ form.hidden_tag()}}
+                            <div class="mb-3">
+                                {{form.date.label(class="form-label")}}
+                                {{form.date(class="DateField form-control")}}
+                            </div>
+                            <div class="mb-3">
+                                {{form.value.label(class="form-label")}}{{form.value(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.time.label(class="form-label")}}{{form.time(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.amount.label(class="form-label")}}{{form.amount(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.product.label(class="form-label")}}{{form.product(class="form-control",value="80")}}
+                            </div>
+
+                            <div class="mb-3">{{form.agents.label(class="form-label")}}</div>
+                            <div class="mb-3">{{form.agents(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.submit( class="btn btn-primary")}}</div>
+                        </form>
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+
+        <div class="col-12 col-md-12">
+                    <p class="display-6">Betting List</p>
+                    <a data-bs-toggle="modal" data-bs-target="#betAddmodal"
+                        class="badge my-3 p-2 rounded-pill bg-info text-decoration-none">Add a bet</a>
+        </div>
+
+        <!-- TABLE  -->
+        <div class="col-12 col-md-12 ">
+            <div class="table-responsive">
+                <table id="betTable" class="display table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Number</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Player</th>
+                            <th>Wager</th>
+                            <th>X</th>
+                            <th>Payout</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bet in bets %}
+                        <tr>
+                            <td>{{bet.id}}</td>
+                            <td><span class="lead fw-bold">{{bet.value}}</span></td>
+                            <td>{{bet.date}}</td>
+                            <td>{{bet.time}}</td>
+                            <td>
+                                <a href="{{url_for('agents.agentProfile',agent_id=bet.agent_id)}}"
+                                    class="badge btn-danger">{{bet.agent_rs.name}}</a>
+                            </td>
+                            <td>{{bet.amount}}</td>
+                            <td>{{ bet.product}}</td>
+                            <td>{{bet.amount_to_pay}}</td>
+                            {% if bet.state == "win" %}
+                            <td><span class="badge bg-success">ပေါက်သည်</span></td>
+                            <td>
+                                <a href="{{url_for('bets.payToAgent',id=bet.id)}}"
+                                    class="badge btn-danger">လျော်မယ်။</a>
+                            </td>
+                            {% elif bet.state == "lose" %}
+                            <td><span class="badge bg-danger">လွဲသည်။</span></td>
+                            <td></td>
+                            {% elif bet.state == "paid" %}
+                            <td><span class="badge bg-secondary">ငွေခြေပြီး၊</span></td>
+                            <td></td>
+                            {% elif bet.state == "unavailable" %}
+                            <td><span class="badge bg-secondary">Unavailable</span></td>
+                            <td></td>
+                            {% elif bet.state=="notnow" or bet.state=="initial" %}
+                            <td><span class="badge bg-secondary">မထွက်သေးပါ၊</span></td>
+                            <td></td>
+                            {% endif %}
+                            <td>
+                                <a href="{{url_for('bets.deleteBet',bet_id=bet.id)}}" class="badge btn-danger">Del</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- TABLE -->
+
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#betTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+    });
+</script>
+{% endblock scripts %}

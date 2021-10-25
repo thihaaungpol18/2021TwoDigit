@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Agent : {{agent.name}}{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <div class="row justify-content-between">
+
+        <!-- Modal -->
+
+        <div class="modal fade" id="betAddmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New bet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            {{ form.hidden_tag()}}
+                            <div class="mb-3">
+                                {{form.date.label(class="form-label")}}
+                                {{form.date(class="DateField form-control")}}
+                            </div>
+                            <div class="mb-3">
+                                {{form.value.label(class="form-label")}}{{form.value(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.time.label(class="form-label")}}{{form.time(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.amount.label(class="form-label")}}{{form.amount(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.product.label(class="form-label")}}{{form.product(class="form-control",value="80")}}
+                            </div>
+
+                            <div class="mb-3">{{form.agents.label(class="form-label")}}</div>
+                            <div class="mb-3">{{form.agents(class="form-control")}}</div>
+                            <div class="mb-3">
+                                {{form.submit( class="btn btn-primary")}}</div>
+                        </form>
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+
+        <div class="col-12">
+            <div class="container">
+                <div class="row justify-content-between">
+                        <p class="display-6"><span class="text-primary">{{agent.name}}</span>'s bet list</p>
+                    <div class="col-md-3 col-sm-12">
+                        <a data-bs-toggle="modal" data-bs-target="#betAddmodal"
+                            class="badge mt-3 p-2 rounded-pill bg-primary text-decoration-none">ထိုးမယ်၊</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-10 col-md-2 my-2 position-fixed-start">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title fw-bold">{{agent.name}}</p>
+                    <p class="card-text">Since : {{agent.getSinceDuration()}} </p>
+                    {% if 0 >= agent.getTotalBalance() %}
+                    <p class="card-text text-danger">ဆပ်ရန် : {{agent.getTotalBalanceString()}} Kyats</p>
+                    {% else %}
+                    <p class="card-text text-success">လျော်ရန် : {{agent.getTotalBalanceString()}} Kyats</p>
+                    {% endif %}
+                    <a type="button" class="btn btn-danger mt-1 " href="">Delete</a><br>
+                    {% if 0 >= agent.getTotalBalance() %}
+                    <a type="button" class="btn btn-success mt-1 " href="">ဆပ်ပြီ</a>
+                    {% else %}
+                    <a type="button" class="btn btn-danger mt-1 ">လျော်မည်</a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-10 col-md-10">
+            <div class="table-responsive">
+                <table id="agentbettable" class="display table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ထိုးဂဏန်း</th>
+                            <th>နေ့ရက်</th>
+                            <th>အချိန်</th>
+                            <th>ဒိုင်</th>
+                            <th>Amount(Kyats)</th>
+                            <th>အဆ</th>
+                            <th>လျော်ရငွေ</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bet in bets %}
+                        <tr>
+                            <td>{{bet.id}}</td>
+                            <td><span class="lead fw-bold">{{bet.value}}</span></td>
+                            <td>{{bet.date}}</td>
+                            <td>{{bet.time}}</td>
+                            <td>
+                                <a href="{{url_for('agents.agentProfile',agent_id=bet.agent_id)}}"
+                                    class="badge btn-danger">{{bet.agent_rs.name}}</a>
+                            </td>
+                            <td>{{bet.amount}}</td>
+                            <td>{{ bet.product}}</td>
+                            <td>{{bet.amount_to_pay}}</td>
+                            {% if bet.state == "win" %}
+                            <td><span class="badge bg-success">ပေါက်သည်</span></td>
+                            <td>
+                                <a href="{{url_for('bets.payToAgentFromAgentProfile',id=bet.id)}}"
+                                    class="badge btn-danger">လျော်မယ်။</a>
+                            </td>
+                            {% elif bet.state == "lose" %}
+                            <td><span class="badge bg-danger">လွဲသည်။</span></td>
+                            <td></td>
+                            {% elif bet.state == "paid" %}
+                            <td><span class="badge bg-secondary">ငွေခြေပြီး၊</span></td>
+                            <td></td>
+                            {% elif bet.state == "unavailable" %}
+                            <td><span class="badge bg-secondary">Unavailable</span></td>
+                            <td></td>
+                            {% elif bet.state=="notnow" or bet.state=="initial" %}
+                            <td><span class="badge bg-secondary">မထွက်သေးပါ၊</span></td>
+                            <td></td>
+                            {% endif %}
+                            <td>
+                                <a href="{{url_for('bets.deleteBetFromAgentProfile',bet_id=bet.id)}}" class="badge btn-danger">ဖျက်</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#agentbettable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}2D List{% endblock %}
+{% block content %}
+<div class="container">
+    <!-- Modal -->
+
+    <div class="modal fade" id="addDailyTwoDigitModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ထွက်ဂဏန်းထည့်မယ်</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post">
+                        {{form.hidden_tag()}}
+                        {{form.time.label(class="form-label fw-bold")}}{{form.time(class="form-control")}}
+                        <br>
+                        {{form.value.label(class="form-label")}}{{form.value(class="form-control my-3")}}
+                        <br>
+                        {{form.date.label(class="form-label")}}{{form.date(class="form-control my-3")}}
+                        <br>
+                        {{form.submit(class="btn btn-lg btn-primary my-3")}}
+                    </form>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+
+    <div class="row justify-content-center my-3">
+        <div class="col-12 ">
+            <p class="display-6">2D ထွက်စာရင်း</p>
+            <a class="badge my-3 p-2 rounded-pill bg-info text-decoration-none"
+                href="{{url_for('daily.dailyThreeDigitNumbers')}}">3D ကြည့်ရန်။</a>
+            <a class="badge my-3 p-2 rounded-pill bg-info text-decoration-none" data-bs-toggle="modal"
+                data-bs-target="#addDailyTwoDigitModal">Add Today's Number</a>
+        </div>
+        <div class="table-responsive">
+            <table id="twodtable" class="display table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ပေါက်ဂဏန်း</th>
+                        <th>နေ့ရက်</th>
+                        <th>အချိန်</th>
+                        <th>လုပ်ဆောင်ချက်</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in all_items %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td><span style="font-weight: 900;" class="badge bg-primary">{{item.value}}</span></td>
+                        <td><span style="font-weight: 900;" class="badge bg-secondary">{{item.date}}</span></td>
+                        {% if item.time=="morning" %}
+                        <td><span style="font-weight: 900;">နေ့ခင်း</span></td>
+                        {% else %}
+                        <td><span style="font-weight: 900;">ညနေ</span></td>
+                        {% endif %}
+
+                        <td><a href="{{ url_for('daily.delete',id=item.id )}}" class="badge bg-danger">Delete</a></td>
+
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+
+    $(document).ready(function () {
+        $('#twodtable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
+        });
+    });
+</script>
+{% endblock %}
